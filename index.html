@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festival Vinho & Jazz Tiradentes 2026 — Dashboard Executivo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F1115;--bg2:#141821;--bg3:#1B1F27;
+  --card:#202632;--card2:#252C38;
+  --border:#313845;--border2:#3D4556;
+  --text:#FFFFFF;--text2:#C7CDD8;--text3:#9AA4B2;
+  --green:#22C55E;--green-bg:#052E16;
+  --red:#EF4444;--red-bg:#2D0A0A;
+  --amber:#F59E0B;--amber-bg:#2D1A00;
+  --blue:#3B82F6;--blue-bg:#0C1A3A;
+  --gold:#D4AF37;--gold-bg:#2A2000;
+  --neutral:#94A3B8;
+  --brand-bar:#8B3A52;--brand-bar2:#A04D65;--brand-bar3:#B56078;--brand-bar4:#C97390;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.5}
+.db{max-width:1200px;margin:0 auto}
+
+/* HERO */
+.hero{background:var(--bg3);padding:28px 24px 24px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.hero-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:4px}
+.hero-sub{font-size:12px;color:var(--text3);margin-bottom:20px}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.hero-kpi{background:var(--card);padding:14px 16px}
+.hero-kpi-label{font-size:10px;color:var(--text3);letter-spacing:.5px;margin-bottom:4px}
+.hero-kpi-val{font-size:22px;font-weight:600;color:var(--text);line-height:1}
+.hero-kpi-sub{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* NAV */
+.nav-strip{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;position:sticky;top:0;z-index:100}
+.nav-btn{padding:10px 16px;font-size:12px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:inherit;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.nav-btn:hover:not(.active){color:var(--text2);background:var(--bg3)}
+
+/* PAGES */
+.page{display:none;padding:24px;background:var(--bg)}.page.active{display:block}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.section-label span{color:var(--gold)}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.kpi{background:var(--card);padding:14px 16px}
+.kpi-label{font-size:10px;color:var(--text3);letter-spacing:.3px;margin-bottom:6px}
+.kpi-val{font-size:20px;font-weight:600;color:var(--text);line-height:1}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:3px}
+.kpi-val.pos{color:var(--green)}.kpi-val.neg{color:var(--red)}.kpi-val.warn{color:var(--amber)}.kpi-val.gold{color:var(--gold)}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-65{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px}
+.card-title{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.3px;margin-bottom:14px;text-transform:uppercase}
+.card-insight{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.6}
+.card-insight strong{color:var(--text2);font-weight:600}
+
+/* HBARS */
+.hbar-list{display:flex;flex-direction:column;gap:8px}
+.hbar{display:flex;align-items:center;gap:8px}
+.hbar-label{width:140px;font-size:11px;color:var(--text2);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;background:var(--border);border-radius:2px;height:6px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:2px}
+.hbar-val{font-size:11px;font-weight:600;color:var(--text);width:65px;text-align:right;flex-shrink:0}
+.hbar-pct{font-size:10px;color:var(--text3);width:32px;text-align:right;flex-shrink:0}
+
+/* WATERFALL */
+.waterfall-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.waterfall-row:last-child{border-bottom:none}
+.wf-label{flex:1;font-size:11px;color:var(--text2)}
+.wf-bar-wrap{width:180px;height:14px;position:relative;background:var(--bg3);border-radius:2px;overflow:hidden;flex-shrink:0}
+.wf-bar{height:100%;border-radius:2px;position:absolute;left:0}
+.wf-val{font-size:11px;font-weight:600;width:68px;text-align:right;flex-shrink:0;color:var(--text)}
+
+/* PAYMENT */
+.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pay-item{padding:12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
+.pay-name{font-size:10px;color:var(--text3);letter-spacing:.3px;margin-bottom:4px}
+.pay-val{font-size:15px;font-weight:600;color:var(--text)}
+.pay-pct{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* INSIGHT BLOCKS */
+.insight-block{background:var(--bg3);border-left:2px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;margin-bottom:8px}
+.insight-block.green{border-left-color:var(--green)}
+.insight-block.red{border-left-color:var(--red)}
+.insight-block.blue{border-left-color:var(--blue)}
+.insight-tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;font-weight:600}
+.insight-tag.green{color:var(--green)}.insight-tag.red{color:var(--red)}.insight-tag.blue{color:var(--blue)}
+.insight-text{font-size:12px;color:var(--text2);line-height:1.6}
+.insight-text strong{color:var(--text)}
+
+/* DAY CHART */
+.day-chart{display:flex;align-items:flex-end;gap:6px;height:100px}
+.day-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.day-bar{width:100%;border-radius:3px 3px 0 0}
+.day-lbl{font-size:9px;color:var(--text3);text-align:center}
+.day-val{font-size:9px;font-weight:600;color:var(--text2)}
+
+/* CAIXA TABLE */
+.caixa-table{width:100%;border-collapse:collapse}
+.caixa-table tr{border-bottom:1px solid var(--border)}
+.caixa-table tr:last-child{border-bottom:none}
+.caixa-table td{padding:6px 0;font-size:11px;vertical-align:middle}
+.cx-rank{width:20px;color:var(--text3);font-size:10px}
+.cx-name{color:var(--text2);width:65px}
+.cx-bar-cell{padding:0 8px}
+.cx-bar-track{background:var(--border);border-radius:2px;height:5px;overflow:hidden}
+.cx-bar-fill{height:100%;border-radius:2px}
+.cx-val{text-align:right;font-weight:600;color:var(--text);width:65px}
+.cx-badge{display:inline-block;font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;background:var(--gold-bg);color:var(--gold)}
+
+/* STRAT */
+.strat-row{display:flex;gap:12px;margin-bottom:10px}
+.strat-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border)}
+.strat-body{flex:1}
+.strat-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.strat-desc{font-size:11px;color:var(--text3);line-height:1.55}
+.strat-impact{font-size:11px;color:var(--green);margin-top:3px;font-weight:600}
+
+/* REC */
+.rec-num{width:26px;height:26px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.priority-badge{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:600}
+.p-alta{background:var(--red-bg);color:var(--red)}
+.p-media{background:var(--amber-bg);color:var(--amber)}
+.p-baixa{background:var(--green-bg);color:var(--green)}
+
+/* FUNNEL */
+.funnel-step{border-radius:4px;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-size:12px;margin-bottom:3px}
+
+/* COTA CARDS */
+.cota-card{padding:14px;border-radius:6px;margin-bottom:10px}
+.cota-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.cota-val{font-size:20px;font-weight:600;color:var(--text)}
+.cota-desc{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .hero-kpis{grid-template-columns:1fr 1fr}
+  .grid-2,.grid-65{grid-template-columns:1fr}
+  .nav-strip{flex-wrap:nowrap}
+}
+</style>
+</head>
+<body>
+<div class="db">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Relatório executivo · Temporada 2026</div>
+  <div class="hero-title">Festival Vinho &amp; Jazz — Tiradentes, MG</div>
+  <div class="hero-sub">05 a 14 de junho de 2026 · Dois finais de semana · Consolidado SpotPass</div>
+  <div class="hero-kpis">
+    <div class="hero-kpi"><div class="hero-kpi-label">Receita líquida</div><div class="hero-kpi-val">R$ 795k</div><div class="hero-kpi-sub">Após estornos (0,68%)</div></div>
+    <div class="hero-kpi"><div class="hero-kpi-label">Ticket médio</div><div class="hero-kpi-val">R$ 61,5</div><div class="hero-kpi-sub">Por visitante estimado</div></div>
+    <div class="hero-kpi"><div class="hero-kpi-label">Transações</div><div class="hero-kpi-val">~12.943</div><div class="hero-kpi-sub">Itens processados</div></div>
+    <div class="hero-kpi"><div class="hero-kpi-label">PDVs ativos</div><div class="hero-kpi-val">144</div><div class="hero-kpi-sub">R$ 5,7k receita/PDV</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-strip">
+  <button class="nav-btn active" onclick="nav('p1',this)">Resumo executivo</button>
+  <button class="nav-btn" onclick="nav('p2',this)">Performance financeira</button>
+  <button class="nav-btn" onclick="nav('p3',this)">Consumo de vinhos</button>
+  <button class="nav-btn" onclick="nav('p4',this)">Experiências</button>
+  <button class="nav-btn" onclick="nav('p5',this)">Operação</button>
+  <button class="nav-btn" onclick="nav('p6',this)">Oportunidades</button>
+  <button class="nav-btn" onclick="nav('p7',this)">Patrocínios</button>
+  <button class="nav-btn" onclick="nav('p8',this)">Recomendações</button>
+</div>
+
+<!-- P1: RESUMO EXECUTIVO -->
+<div id="p1" class="page active">
+  <div class="section-label"><span>01</span> — Resumo executivo</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Vendas brutas</div><div class="kpi-val">R$ 802k</div></div>
+    <div class="kpi"><div class="kpi-label">Estornos</div><div class="kpi-val neg">−R$ 5,5k</div><div class="kpi-sub">0,68% do bruto</div></div>
+    <div class="kpi"><div class="kpi-label">Receita líquida</div><div class="kpi-val pos">R$ 795k</div></div>
+    <div class="kpi"><div class="kpi-label">Em produção</div><div class="kpi-val">R$ 10,9k</div><div class="kpi-sub">1,4% do total</div></div>
+    <div class="kpi"><div class="kpi-label">Crédito (domina)</div><div class="kpi-val gold">62,1%</div><div class="kpi-sub">R$ 497k</div></div>
+  </div>
+  <div class="grid-65">
+    <div class="card">
+      <div class="card-title">Receita por dia — evolução</div>
+      <div class="day-chart" id="day-chart-p1"></div>
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--text3)">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;display:inline-block;background:#8B3A52;border-radius:2px"></span>1º final de semana</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;display:inline-block;background:#D4AF37;border-radius:2px"></span>2º final de semana</span>
+      </div>
+      <div class="card-insight"><strong>1º FDS (05–07/jun):</strong> R$ 415k · <strong>2º FDS (12–14/jun):</strong> R$ 380k. Dias de meio de semana (07/jun e 14/jun) registram queda abrupta — padrão de turismo de curta estadia.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Composição do pagamento</div>
+      <div class="pay-row">
+        <div class="pay-item"><div class="pay-name">Crédito</div><div class="pay-val">R$ 497k</div><div class="pay-pct">62,1% · perfil A/B</div></div>
+        <div class="pay-item"><div class="pay-name">Débito</div><div class="pay-val">R$ 204k</div><div class="pay-pct">25,5%</div></div>
+        <div class="pay-item"><div class="pay-name">PIX</div><div class="pay-val">R$ 73k</div><div class="pay-pct">9,1%</div></div>
+        <div class="pay-item"><div class="pay-name">Dinheiro</div><div class="pay-val">R$ 21k</div><div class="pay-pct">2,6%</div></div>
+      </div>
+      <div class="card-insight">97,4% das transações são digitais. Público consistente com perfil premium.</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="insight-block green"><div class="insight-tag green">Destaque positivo</div><div class="insight-text"><strong>Estorno mínimo (0,68%).</strong> Operação limpa. Benchmark de eventos similares costuma ter 1,5–3%.</div></div>
+      <div class="insight-block"><div class="insight-tag">Atenção</div><div class="insight-text"><strong>Fichas no 1º FDS</strong> comprometem análise de mix. R$ 32,5k sem detalhamento de produto — migrar para PDV digital é prioridade para 2027.</div></div>
+      <div class="insight-block red"><div class="insight-tag red">Risco</div><div class="insight-text"><strong>72% da receita em uma única categoria</strong> (vinho). Concentração elevada para um evento com ambições de crescimento sustentável.</div></div>
+    </div>
+    <div>
+      <div class="insight-block blue"><div class="insight-tag blue">O que aconteceu</div><div class="insight-text"><strong>R$ 795k em 4 dias operacionais efetivos.</strong> Média de R$ 199k/dia nos dias principais. O evento opera como um negócio de varejo premium de altíssima densidade por hora.</div></div>
+      <div class="insight-block blue"><div class="insight-tag blue">Por que importa</div><div class="insight-text"><strong>Com 15.000 visitantes estimados e ticket de R$ 61,5,</strong> o festival ainda tem espaço considerável. Eventos de vinho comparáveis em Mendoza e Borgonha operam com tickets de USD 80–150 por visita.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- P2: PERFORMANCE FINANCEIRA -->
+<div id="p2" class="page">
+  <div class="section-label"><span>02</span> — Performance financeira</div>
+  <div class="grid-65">
+    <div class="card">
+      <div class="card-title">Waterfall — composição da receita</div>
+      <div id="wf-chart"></div>
+      <div class="card-insight">A receita de vinhos (garrafas + taças + degustações) representa <strong>72% do total</strong>. Alimentação, destilados e experiências respondem pelos 28% restantes.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">1º vs 2º final de semana</div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">1º FDS — 05 a 07/jun</div>
+        <div style="font-size:24px;font-weight:600;color:var(--text)">R$ 415k</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">52,2% da receita total</div>
+        <div style="background:var(--border);border-radius:2px;height:6px;margin-top:6px;overflow:hidden"><div style="width:52%;height:100%;background:#8B3A52;border-radius:2px"></div></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">2º FDS — 12 a 14/jun</div>
+        <div style="font-size:24px;font-weight:600;color:var(--text)">R$ 380k</div>
+        <div style="font-size:10px;color:var(--amber);margin-top:2px">−R$ 35k vs. 1º FDS (−8,4%)</div>
+        <div style="background:var(--border);border-radius:2px;height:6px;margin-top:6px;overflow:hidden"><div style="width:48%;height:100%;background:var(--gold);border-radius:2px"></div></div>
+      </div>
+      <div style="background:var(--bg3);border-radius:6px;padding:10px 12px;border:1px solid var(--border)">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:600">Notas metodológicas</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">1º FDS inclui volume em fichas de consumo sem detalhamento de produto. Mix de categorias tem melhor confiabilidade no 2º FDS.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Ranking de categorias — Pareto de receita</div>
+    <div id="cat-pareto-wrap" style="position:relative;width:100%;height:220px">
+      <canvas id="pareto-c" role="img" aria-label="Gráfico de Pareto das 10 categorias de receita do festival">Pareto de receita por categoria: garrafas, taças, degustações, catataua, cervejas, fichas, alimentação, polenta, Mazuma, gelatos.</canvas>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--text3)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#8B3A52;border-radius:2px;display:inline-block"></span>Receita por categoria</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:18px;height:2px;background:var(--gold);display:inline-block"></span>% acumulado</span>
+    </div>
+    <div class="card-insight"><strong>80% da receita</strong> concentrada em 3 categorias: garrafas, taças e degustações. Curva de Pareto clássica — sinal de especialização, não diversificação.</div>
+  </div>
+</div>
+
+<!-- P3: CONSUMO DE VINHOS -->
+<div id="p3" class="page">
+  <div class="section-label"><span>03</span> — Consumo de vinhos</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Garrafas (total)</div><div class="kpi-val pos">R$ 270k</div><div class="kpi-sub">1.970 un · 34% receita</div></div>
+    <div class="kpi"><div class="kpi-label">Taças (total)</div><div class="kpi-val pos">R$ 208k</div><div class="kpi-sub">2.871 un · 26% receita</div></div>
+    <div class="kpi"><div class="kpi-label">Degustações</div><div class="kpi-val pos">R$ 100k</div><div class="kpi-sub">679 pacotes · 13%</div></div>
+    <div class="kpi"><div class="kpi-label">Gran Reserva</div><div class="kpi-val warn">68 un</div><div class="kpi-sub">Potencial subexplorado</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Garrafas por nível de preço</div>
+      <div class="hbar-list">
+        <div class="hbar"><div class="hbar-label">Premium (R$ 135)</div><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#8B3A52"></div></div><div class="hbar-val">R$ 112k</div><div class="hbar-pct">42%</div></div>
+        <div class="hbar"><div class="hbar-label">Super Premium (R$ 165)</div><div class="hbar-track"><div class="hbar-fill" style="width:73%;background:#A04D65"></div></div><div class="hbar-val">R$ 79k</div><div class="hbar-pct">29%</div></div>
+        <div class="hbar"><div class="hbar-label">Entrada (R$ 105)</div><div class="hbar-track"><div class="hbar-fill" style="width:56%;background:#B56078"></div></div><div class="hbar-val">R$ 62k</div><div class="hbar-pct">23%</div></div>
+        <div class="hbar"><div class="hbar-label">Gran Reserva</div><div class="hbar-track"><div class="hbar-fill" style="width:15%;background:var(--gold)"></div></div><div class="hbar-val">R$ 17k</div><div class="hbar-pct">6%</div></div>
+      </div>
+      <div class="card-insight"><strong>Gran Reserva:</strong> 68 garrafas com maior preço unitário, mas apenas 6% da receita de garrafas. Gap de posicionamento — não de demanda.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Taças por faixa de valor</div>
+      <div class="hbar-list">
+        <div class="hbar"><div class="hbar-label">Taça R$ 80 (âncora)</div><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#8B3A52"></div></div><div class="hbar-val">R$ 126k</div><div class="hbar-pct">61%</div></div>
+        <div class="hbar"><div class="hbar-label">Taça R$ 60</div><div class="hbar-track"><div class="hbar-fill" style="width:25%;background:#A04D65"></div></div><div class="hbar-val">R$ 31k</div><div class="hbar-pct">15%</div></div>
+        <div class="hbar"><div class="hbar-label">Taça R$ 70</div><div class="hbar-track"><div class="hbar-fill" style="width:18%;background:#B56078"></div></div><div class="hbar-val">R$ 22k</div><div class="hbar-pct">11%</div></div>
+        <div class="hbar"><div class="hbar-label">Taça R$ 50</div><div class="hbar-track"><div class="hbar-fill" style="width:15%;background:#C97390"></div></div><div class="hbar-val">R$ 19k</div><div class="hbar-pct">9%</div></div>
+        <div class="hbar"><div class="hbar-label">Taça R$ 120</div><div class="hbar-track"><div class="hbar-fill" style="width:8%;background:var(--gold)"></div></div><div class="hbar-val">R$ 10k</div><div class="hbar-pct">5%</div></div>
+      </div>
+      <div class="card-insight"><strong>Taça R$ 80</strong> é o produto âncora do festival: 1.572 unidades, 61% da receita de taças. Concentração estratégica — e também risco de monotonia de portfólio.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Degustações — funil de conversão por nível</div>
+    <div id="deg-funnel"></div>
+    <div class="card-insight">O pacote de 5 degustações (R$ 148/pacote) gerou R$ 100k com 679 pacotes — o produto com maior densidade de receita por transação após garrafas Premium.</div>
+  </div>
+</div>
+
+<!-- P4: EXPERIÊNCIAS -->
+<div id="p4" class="page">
+  <div class="section-label"><span>04</span> — Comportamento do público e experiências</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Funil da jornada de consumo</div>
+      <div id="journey-funnel"></div>
+      <div class="card-insight">A sequência típica: taça de entrada → degustação → garrafa para levar → alimentação de permanência. Cada etapa é uma oportunidade de upsell não capturada.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Categorias não-vinho — receita</div>
+      <div class="hbar-list">
+        <div class="hbar"><div class="hbar-label">Catataua (snack)</div><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:var(--gold)"></div></div><div class="hbar-val">R$ 67k</div><div class="hbar-pct">8%</div></div>
+        <div class="hbar"><div class="hbar-label">Cervejas artesanais</div><div class="hbar-track"><div class="hbar-fill" style="width:78%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 55k</div><div class="hbar-pct">7%</div></div>
+        <div class="hbar"><div class="hbar-label">Alimentação</div><div class="hbar-track"><div class="hbar-fill" style="width:47%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 32k</div><div class="hbar-pct">4%</div></div>
+        <div class="hbar"><div class="hbar-label">Polenta cremosa</div><div class="hbar-track"><div class="hbar-fill" style="width:25%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 18k</div><div class="hbar-pct">2%</div></div>
+        <div class="hbar"><div class="hbar-label">Drink Mazuma</div><div class="hbar-track"><div class="hbar-fill" style="width:12%;background:var(--amber)"></div></div><div class="hbar-val">R$ 8k</div><div class="hbar-pct">1%</div></div>
+      </div>
+      <div class="card-insight"><strong>Mazuma com apenas R$ 8k</strong> em evento organizado pela Trindade é o dado mais revelador desta análise. Potencial real: R$ 40–50k com estrutura dedicada.</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:12px">
+    <div class="card">
+      <div class="card-title">Tábuas e gastronomia premium</div>
+      <div class="hbar-list">
+        <div class="hbar"><div class="hbar-label">Tábua Grande (R$ 80)</div><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:var(--blue)"></div></div><div class="hbar-val">R$ 16,7k</div><div class="hbar-pct">209 un</div></div>
+        <div class="hbar"><div class="hbar-label">Tábua Média (R$ 70)</div><div class="hbar-track"><div class="hbar-fill" style="width:43%;background:var(--blue)"></div></div><div class="hbar-val">R$ 7,1k</div><div class="hbar-pct">102 un</div></div>
+        <div class="hbar"><div class="hbar-label">Tábua Pequena (R$ 55)</div><div class="hbar-track"><div class="hbar-fill" style="width:24%;background:var(--blue)"></div></div><div class="hbar-val">R$ 4k</div><div class="hbar-pct">73 un</div></div>
+        <div class="hbar"><div class="hbar-label">Sanduíche</div><div class="hbar-track"><div class="hbar-fill" style="width:57%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 9,5k</div><div class="hbar-pct">211 un</div></div>
+        <div class="hbar"><div class="hbar-label">Caldo Mandioca</div><div class="hbar-track"><div class="hbar-fill" style="width:52%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 8,7k</div><div class="hbar-pct">218 un</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cerveja artesanal — Therezópolis</div>
+      <div class="hbar-list">
+        <div class="hbar"><div class="hbar-label">Gold LN (R$ 15)</div><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 11k</div><div class="hbar-pct">781 un</div></div>
+        <div class="hbar"><div class="hbar-label">Promo (kit)</div><div class="hbar-track"><div class="hbar-fill" style="width:77%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 29k</div><div class="hbar-pct">335 kits</div></div>
+        <div class="hbar"><div class="hbar-label">Session IPA</div><div class="hbar-track"><div class="hbar-fill" style="width:53%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 5,9k</div><div class="hbar-pct">400 un</div></div>
+        <div class="hbar"><div class="hbar-label">Rubine Bock</div><div class="hbar-track"><div class="hbar-fill" style="width:15%;background:var(--neutral)"></div></div><div class="hbar-val">R$ 1,7k</div><div class="hbar-pct">118 un</div></div>
+      </div>
+      <div class="card-insight">Therezópolis gerou <strong>R$ 54,5k (6,8% da receita)</strong>. É o benchmark para novas cotas de parceria de produto.</div>
+    </div>
+  </div>
+</div>
+
+<!-- P5: OPERAÇÃO -->
+<div id="p5" class="page">
+  <div class="section-label"><span>05</span> — Operação e PDVs</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Caixa líder</div><div class="kpi-val">R$ 105k</div><div class="kpi-sub">Caixa 1 · 13% do total</div></div>
+    <div class="kpi"><div class="kpi-label">Top 5 caixas</div><div class="kpi-val warn">56%</div><div class="kpi-sub">R$ 446k concentrados</div></div>
+    <div class="kpi"><div class="kpi-label">Receita/PDV</div><div class="kpi-val">R$ 5,7k</div><div class="kpi-sub">Média consolidada</div></div>
+    <div class="kpi"><div class="kpi-label">Menor PDV</div><div class="kpi-val neg">R$ 8k</div><div class="kpi-sub">Caixa 15 — revisar</div></div>
+  </div>
+  <div class="grid-65">
+    <div class="card">
+      <div class="card-title">Ranking de caixas — receita consolidada</div>
+      <table class="caixa-table" id="cx-table"></table>
+      <div class="card-insight">Os 5 maiores PDVs (Caixa 1, 5, 3, 4, 7) respondem por 56% da receita. Caixas 9, 12, 15 e 16 somam juntos menos de R$ 40k no evento completo.</div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Concentração de receita</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>Top 5 caixas</span><span style="color:var(--text);font-weight:600">R$ 446k (56%)</span></div>
+            <div style="background:var(--border);border-radius:2px;height:8px;overflow:hidden"><div style="width:56%;height:100%;background:#8B3A52;border-radius:2px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>6–10º caixas</span><span style="color:var(--text);font-weight:600">R$ 237k (30%)</span></div>
+            <div style="background:var(--border);border-radius:2px;height:8px;overflow:hidden"><div style="width:30%;height:100%;background:var(--neutral);border-radius:2px"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>Demais 10 caixas</span><span style="color:var(--text);font-weight:600">R$ 112k (14%)</span></div>
+            <div style="background:var(--border);border-radius:2px;height:8px;overflow:hidden"><div style="width:14%;height:100%;background:var(--border2);border-radius:2px"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Operadores de destaque</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="font-size:11px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;color:var(--text)">Pedro Henrique</span> — Turnos de maior volume no 2º FDS</div>
+          <div style="font-size:11px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;color:var(--text)">Kelly / Bruna</span> — Consistência nos dois FDS, Caixa 1 e 5</div>
+          <div style="font-size:11px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600;color:var(--text)">Caio Neves</span> — R$ 36k acumulado, Caixa 3</div>
+          <div style="font-size:11px;color:var(--text2);padding:8px 0"><span style="font-weight:600;color:var(--text)">Igor</span> — Dois turnos expressivos Caixa 2</div>
+        </div>
+        <div class="card-insight">Esses 4–5 operadores são ativos operacionais críticos. Ausência de qualquer um em dia de pico impacta resultado diretamente.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P6: OPORTUNIDADES -->
+<div id="p6" class="page">
+  <div class="section-label"><span>06</span> — Oportunidades de crescimento</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Receita atual</div><div class="kpi-val">R$ 795k</div></div>
+    <div class="kpi"><div class="kpi-label">Potencial conservador</div><div class="kpi-val pos">R$ 1,1M</div><div class="kpi-sub">+38% sem ampliar público</div></div>
+    <div class="kpi"><div class="kpi-label">Potencial otimista</div><div class="kpi-val pos">R$ 1,4M</div><div class="kpi-sub">+76% com todas as alavancas</div></div>
+    <div class="kpi"><div class="kpi-label">Ticket alvo 2027</div><div class="kpi-val gold">R$ 90–110</div><div class="kpi-sub">vs. R$ 61,5 atual</div></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="strat-row"><div class="strat-icon" style="background:var(--gold-bg)"><i class="ti ti-crown" style="color:var(--gold)"></i></div><div class="strat-body"><div class="strat-title">Lounge VIP — área premium com capacidade controlada</div><div class="strat-desc">Zona exclusiva (200–300 pessoas/dia), acesso pré-vendido, vinhos Gran Reserva e Super Premium, serviço dedicado, harmonizações inclusas. Ticket estimado: R$ 180–250/pessoa.</div><div class="strat-impact">Potencial: R$ 108–150k adicionais (2 dias × 300 pax × R$ 180)</div></div></div>
+    <div class="strat-row"><div class="strat-icon" style="background:var(--bg3)"><i class="ti ti-bottle" style="color:var(--gold)"></i></div><div class="strat-body"><div class="strat-title">Clube de assinatura — converter degustação em receita recorrente</div><div class="strat-desc">O festival é o melhor funil de aquisição de clube de vinhos possível. O visitante já provou, já decidiu. Oferecer assinatura de 2–4 garrafas/mês dos rótulos degustados transforma o evento em canal.</div><div class="strat-impact">Potencial: R$ 120–180k/ano recorrente (200 assinantes × R$ 600–900/ano)</div></div></div>
+    <div class="strat-row"><div class="strat-icon" style="background:var(--amber-bg)"><i class="ti ti-glass" style="color:var(--amber)"></i></div><div class="strat-body"><div class="strat-title">Estação Mazuma — ativação de marca própria</div><div class="strat-desc">Um evento organizado pela Trindade vendeu apenas R$ 8,2k em drinks Mazuma. Com uma estação dedicada, barman de storytelling e menu com 4–6 drinks autorais, esse número deve ser R$ 40–50k.</div><div class="strat-impact">Potencial: +R$ 40–45k (de R$ 8k para R$ 50k)</div></div></div>
+    <div class="strat-row"><div class="strat-icon" style="background:var(--green-bg)"><i class="ti ti-device-laptop" style="color:var(--green)"></i></div><div class="strat-body"><div class="strat-title">Pré-venda digital — descapitalizar pressão do caixa físico</div><div class="strat-desc">97% das transações são digitais. Vender pacotes de degustação + garrafa com 10% de desconto online antecipa receita, reduz fila no evento e qualifica o público.</div><div class="strat-impact">Potencial: R$ 60–100k em pré-vendas (400 pacotes × R$ 200 médio)</div></div></div>
+    <div class="strat-row"><div class="strat-icon" style="background:var(--blue-bg)"><i class="ti ti-school" style="color:var(--blue)"></i></div><div class="strat-body"><div class="strat-title">Harmonizações guiadas — formato masterclass</div><div class="strat-desc">Sessões de 45 min com sommelier, 4 vinhos + 4 pairings. Ingressos limitados a 20 pessoas. Alto valor percebido, baixo custo operacional, premium por natureza.</div><div class="strat-impact">Potencial: R$ 30–50k (10 sessões × 20 pax × R$ 150–250)</div></div></div>
+  </div>
+</div>
+
+<!-- P7: PATROCÍNIOS -->
+<div id="p7" class="page">
+  <div class="section-label"><span>07</span> — Patrocínios e parcerias estratégicas</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Visitantes estimados</div><div class="kpi-val">15.000</div><div class="kpi-sub">Dois finais de semana</div></div>
+    <div class="kpi"><div class="kpi-label">Permanência média</div><div class="kpi-val">4–6h</div><div class="kpi-sub">Engajamento prolongado</div></div>
+    <div class="kpi"><div class="kpi-label">Transações digitais</div><div class="kpi-val gold">97,4%</div><div class="kpi-sub">Perfil A/B comprovado</div></div>
+    <div class="kpi"><div class="kpi-label">Benchmark Therezópolis</div><div class="kpi-val pos">R$ 54k</div><div class="kpi-sub">6,8% da receita total</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Argumentos de valor para patrocinadores</div>
+      <div class="insight-block green"><div class="insight-tag green">Volume financeiro</div><div class="insight-text"><strong>R$ 795k movimentados em 4 dias.</strong> Público com capacidade de consumo acima da média nacional.</div></div>
+      <div class="insight-block blue"><div class="insight-tag blue">Perfil de pagamento</div><div class="insight-text"><strong>62% em crédito, 2,6% em dinheiro.</strong> Distribuição sociodemográfica de renda alta — sem necessidade de pesquisa adicional.</div></div>
+      <div class="insight-block"><div class="insight-tag">Tempo de exposição</div><div class="insight-text"><strong>4–6h de permanência</strong> por visitante é raridade em eventos. Não é uma impressão de banner — é imersão de marca.</div></div>
+      <div class="insight-block"><div class="insight-tag">Contexto premium</div><div class="insight-text">Jazz, vinho, gastronomia, Serra de São José, inverno em Tiradentes. Associação de marca de altíssimo valor editorial.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Estrutura de cotas sugerida</div>
+      <div class="cota-card" style="border:1px solid var(--gold);background:var(--gold-bg)">
+        <div class="cota-label" style="color:var(--gold)">Diamante — naming right</div>
+        <div class="cota-val">R$ 80–120k</div>
+        <div class="cota-desc">Exclusividade de categoria, stand dedicado, naming da área principal, comunicação integrada.</div>
+      </div>
+      <div class="cota-card" style="border:1px solid var(--border);background:var(--bg3)">
+        <div class="cota-label" style="color:var(--text3)">Ouro — produto no evento</div>
+        <div class="cota-val">R$ 30–50k</div>
+        <div class="cota-desc">Produto integrado ao evento, ativação de marca, comunicação. Modelo Therezópolis.</div>
+      </div>
+      <div class="cota-card" style="border:1px solid var(--border);background:var(--bg3)">
+        <div class="cota-label" style="color:var(--text3)">Prata — presença institucional</div>
+        <div class="cota-val">R$ 10–20k</div>
+        <div class="cota-desc">Visibilidade de marca, sinalização e menção em comunicações.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P8: RECOMENDAÇÕES -->
+<div id="p8" class="page">
+  <div class="section-label"><span>08</span> — Recomendações estratégicas 2027</div>
+  <div style="display:flex;flex-direction:column;gap:8px" id="rec-list"></div>
+</div>
+
+</div><!-- .db -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function nav(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  buildCharts(id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const built={};
+function buildCharts(pid){
+  if(built[pid])return;
+  built[pid]=true;
+  if(pid==='p1')buildP1();
+  if(pid==='p2')buildP2();
+  if(pid==='p3')buildP3();
+  if(pid==='p4')buildP4();
+  if(pid==='p5')buildP5();
+  if(pid==='p8')buildP8();
+}
+
+const dayData=[
+  {d:'05/jun',v:200347,fds:1},{d:'06/jun',v:175259,fds:1},{d:'07/jun',v:25914,fds:1},
+  {d:'12/jun',v:180852,fds:2},{d:'13/jun',v:177484,fds:2},{d:'14/jun',v:35283,fds:2}
+];
+
+function buildP1(){
+  const dc=document.getElementById('day-chart-p1');
+  if(!dc)return;
+  const maxV=Math.max(...dayData.map(x=>x.v));
+  dc.innerHTML='';
+  dayData.forEach(d=>{
+    const h=Math.round(d.v/maxV*90);
+    const col=d.fds===1?'#8B3A52':'#D4AF37';
+    dc.innerHTML+=`<div class="day-col"><div class="day-val">R$${Math.round(d.v/1000)}k</div><div class="day-bar" style="height:${h}px;background:${col}"></div><div class="day-lbl">${d.d}</div></div>`;
+  });
+}
+
+function buildP2(){
+  const cats=[
+    {n:'Garrafas vinho',v:270395},{n:'Taças',v:207990},{n:'Degustações 5 taças',v:99755},
+    {n:'Catataua',v:67025},{n:'Cervejas artesanais',v:54505},{n:'Fichas consumo',v:32545},
+    {n:'Alimentação',v:32545},{n:'Polenta cremosa',v:17875},{n:'Drink Mazuma',v:8171},{n:'Gelatos',v:3650}
+  ];
+  const total=cats.reduce((s,c)=>s+c.v,0);
+  const wf=document.getElementById('wf-chart');
+  if(wf){
+    wf.innerHTML='';
+    cats.forEach(c=>{
+      const pct=Math.round(c.v/total*100);
+      wf.innerHTML+=`<div class="waterfall-row"><div class="wf-label">${c.n}</div><div class="wf-bar-wrap"><div class="wf-bar" style="width:${pct}%;background:#8B3A52"></div></div><div class="wf-val">R$ ${Math.round(c.v/1000)}k</div></div>`;
+    });
+  }
+  let cum=0;
+  const cums=cats.map(c=>{cum+=c.v;return Math.round(cum/total*100)});
+  const ctx=document.getElementById('pareto-c');
+  if(!ctx)return;
+  new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:cats.map(c=>c.n.length>14?c.n.slice(0,13)+'…':c.n),
+      datasets:[
+        {type:'bar',label:'Receita',data:cats.map(c=>c.v),backgroundColor:'#8B3A52',borderRadius:2,yAxisID:'y'},
+        {type:'line',label:'% Acumulado',data:cums,borderColor:'#D4AF37',borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4AF37',fill:false,yAxisID:'y2',tension:.3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#9AA4B2',font:{size:9}},grid:{color:'#313845'}},
+        y:{ticks:{color:'#9AA4B2',font:{size:9},callback:v=>v>=1000?'R$'+Math.round(v/1000)+'k':v},grid:{color:'#313845'}},
+        y2:{position:'right',min:0,max:100,ticks:{color:'#9AA4B2',font:{size:9},callback:v=>v+'%'},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function buildP3(){
+  const df=document.getElementById('deg-funnel');
+  if(!df)return;
+  [{n:'Degustação Premium (R$ 145)',v:'R$ 45,5k · 314 un',w:100,bg:'#8B3A52'},
+   {n:'Degustação Super Premium (R$ 165)',v:'R$ 35,5k · 215 un',w:78,bg:'#A04D65'},
+   {n:'Degustação Entrada (R$ 125)',v:'R$ 18,7k · 150 un',w:47,bg:'#B56078'}
+  ].forEach(s=>{
+    df.innerHTML+=`<div class="funnel-step" style="background:${s.bg};width:${s.w}%"><span style="font-weight:600;color:#fff">${s.n}</span><span style="color:rgba(255,255,255,.8);font-size:11px">${s.v}</span></div>`;
+  });
+}
+
+function buildP4(){
+  const jf=document.getElementById('journey-funnel');
+  if(!jf)return;
+  [{n:'Entrada — Taça R$ 80 (produto âncora)',v:'R$ 126k · 1.572 un',w:100,bg:'#8B3A52',tc:'#fff'},
+   {n:'Descoberta — Degustação 5 taças',v:'R$ 100k · 679 pacotes',w:88,bg:'#A04D65',tc:'#fff'},
+   {n:'Conversão — Garrafa Premium/Super Premium',v:'R$ 191k · 1.310 un',w:75,bg:'#B56078',tc:'#fff'},
+   {n:'Permanência — Tábua + alimentação',v:'R$ 28k · 384 un',w:55,bg:'#252C38',tc:'#C7CDD8'},
+   {n:'Complemento — Cerveja artesanal',v:'R$ 55k · 2.035 un',w:40,bg:'#252C38',tc:'#C7CDD8'}
+  ].forEach(s=>{
+    jf.innerHTML+=`<div style="background:${s.bg};color:${s.tc};border-radius:4px;padding:9px 14px;width:${s.w}%;display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;border:1px solid #313845"><span style="font-weight:600">${s.n}</span><span style="opacity:.85">${s.v}</span></div>`;
+  });
+}
+
+function buildP5(){
+  const cxData=[
+    {n:'Caixa 1',v:104701},{n:'Caixa 5',v:93491},{n:'Caixa 3',v:74401},{n:'Caixa 4',v:71839},
+    {n:'Caixa 7',v:66593},{n:'Caixa 2',v:61933},{n:'Caixa 6',v:45113},{n:'Caixa 18',v:38677},
+    {n:'Caixa 10',v:33141},{n:'Caixa 19',v:32232},{n:'Caixa 8',v:30359},{n:'Caixa 17',v:21971}
+  ];
+  const maxCx=cxData[0].v;
+  const ct=document.getElementById('cx-table');
+  if(!ct)return;
+  cxData.forEach((c,i)=>{
+    const pct=Math.round(c.v/maxCx*100);
+    const col=i<5?'#8B3A52':i<8?'#94A3B8':'#3D4556';
+    const badge=i<5?`<span class="cx-badge">top 5</span>`:'';
+    ct.innerHTML+=`<tr><td class="cx-rank">${i+1}</td><td class="cx-name">${c.n}${badge}</td><td class="cx-bar-cell"><div class="cx-bar-track"><div class="cx-bar-fill" style="width:${pct}%;background:${col}"></div></div></td><td class="cx-val">R$ ${Math.round(c.v/1000)}k</td></tr>`;
+  });
+}
+
+function buildP8(){
+  const recs=[
+    {n:1,t:'Eliminar fichas de consumo',d:'Migrar 100% para PDV digital. Sem isso, 2027 continuará com análise parcial e tomada de decisão comprometida. Não é investimento — é custo de não fazer.',p:'alta'},
+    {n:2,t:'Criar e ativar o Lounge VIP',d:'R$ 100–150k de receita incremental sem ampliar público. Definir produto, precificar e vender antes do evento. Único item que pode mover o ticket médio de R$ 61 para R$ 90+.',p:'alta'},
+    {n:3,t:'Ativar clube de assinatura de vinhos',d:'O festival é o melhor funil de aquisição de clube de vinhos existente. Transformar a degustação em canal de receita recorrente — R$ 120–180k/ano com 200 assinantes.',p:'alta'},
+    {n:4,t:'Ativar estação Mazuma com estrutura real',d:'R$ 8k em evento da própria marca é inaceitável estrategicamente. Barman, menu autoral, storytelling. Meta: R$ 50k em drinks Mazuma em 2027.',p:'alta'},
+    {n:5,t:'Implementar CRM mínimo de visitantes',d:'Capturar e-mail no credenciamento. 5.000 e-mails de perfil A/B de visitantes de festival premium valem mais do que qualquer campanha de mídia para 2028.',p:'media'},
+    {n:6,t:'Posicionar Gran Reserva com pacote dedicado',d:'68 garrafas Gran Reserva com o maior preço da linha é subperformance. Criar pacote pré-vendável que inclui Gran Reserva + experiência. Meta: de 68 para 200+ garrafas.',p:'media'},
+    {n:7,t:'Desenvolver estratégia específica para 2º FDS',d:'R$ 35k a menos com mais caixas ativos. O 2º FDS não pode continuar como "segunda edição". Programação diferenciada, lançamento de produto exclusivo, comunicação própria.',p:'media'},
+    {n:8,t:'Formalizar retenção dos operadores-chave',d:'Pedro Henrique, Kelly, Bruna, Caio e Igor são ativos críticos. Plano de retenção com bônus de resultado previne o risco operacional mais óbvio do evento.',p:'media'},
+    {n:9,t:'Elevar gastronomia a 8% da receita',d:'Alimentação atual: 4% da receita. Para um evento de 4–6h, esse número deve ser 8–10%. Menus de harmonização, parceiros gastronômicos de qualidade, ancoragem de permanência.',p:'baixa'},
+    {n:10,t:'Usar este relatório como pitch de patrocínio',d:'Os dados aqui — ticket R$ 61,5, 97% digital, 4–6h permanência, 15k visitantes — são o melhor argumento possível para novos patrocinadores. Transformar em deck de 10 slides e apresentar a marcas premium.',p:'baixa'}
+  ];
+  const labels={alta:'Prioridade alta',media:'Prioridade média',baixa:'Prioridade crescimento'};
+  const rl=document.getElementById('rec-list');
+  if(!rl)return;
+  recs.forEach(r=>{
+    rl.innerHTML+=`<div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--card)"><div class="rec-num">${r.n}</div><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><div style="font-size:12px;font-weight:600;color:var(--text)">${r.t}</div><span class="priority-badge p-${r.p}">${labels[r.p]}</span></div><div style="font-size:11px;color:var(--text3);line-height:1.6">${r.d}</div></div></div>`;
+  });
+}
+
+setTimeout(()=>{buildP1();buildP8();},100);
+</script>
+</body>
+</html>
